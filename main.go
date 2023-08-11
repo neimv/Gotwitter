@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -36,8 +37,11 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	secretModel, err := secretmanager.GetSecret(os.Getenv("SecretName"))
+	fmt.Println("Secretro obtenido")
+	fmt.Println(err)
 
 	if err != nil {
+		fmt.Println(err)
 		res = &events.APIGatewayProxyResponse{
 			StatusCode: http.StatusInternalServerError,
 			Body:       "Error en la lectura de Secrets" + err.Error(),
@@ -47,7 +51,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 		}
 	}
 
-	path := strings.Replace(request.PathParameters["twitterGo"], os.Getenv("UrlPrefix"), "", -1)
+	path := strings.Replace(request.PathParameters["twittergo"], os.Getenv("UrlPrefix"), "", -1)
 
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("path"), path)
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("method"), request.HTTPMethod)
@@ -88,7 +92,7 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return respAPI.CustomResp, nil
 	}
 
-	return res, nil
+	// return res, nil
 }
 
 func ValidoParametros() bool {
